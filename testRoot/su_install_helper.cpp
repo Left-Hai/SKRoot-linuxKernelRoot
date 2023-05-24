@@ -9,9 +9,10 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
-#include <sys/stat.h> 
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/xattr.h>
+#include <android/log.h>
 
 /*
  * xattr name for SELinux attributes.
@@ -79,6 +80,7 @@ std::string install_su(const char* str_root_key, const char* base_path, const ch
 	if (_su_hide_folder_path.empty()) {
 		//2.取不到，那就创建一个
 		_su_hide_folder_path = create_su_hide_folder(str_root_key, base_path, _su_hide_folder_head_flag.c_str());
+//		__android_log_print(ANDROID_LOG_ERROR, "Root", "取不到，那就创建一个: %s", _su_hide_folder_path.c_str());
 	}
 	if (_su_hide_folder_path.empty()) {
 		TRACE("su hide folder path empty error.\n");
@@ -90,7 +92,8 @@ std::string install_su(const char* str_root_key, const char* base_path, const ch
 		err = -503;
 		return {};
 	}
-	std::string su_hide_full_path = _su_hide_folder_path + "/" + "su";
+//	std::string su_hide_full_path = _su_hide_folder_path + "/" + "su";
+	std::string su_hide_full_path = _su_hide_folder_path + "su";
 	//如果存在了就不要理了
 	if(access(su_hide_full_path.c_str(), F_OK) == -1) {
 		if (!copy_file(origin_su_full_path, su_hide_full_path.c_str())) {
@@ -109,11 +112,13 @@ std::string install_su(const char* str_root_key, const char* base_path, const ch
 }
 
 std::string safe_install_su(const char* str_root_key, const char* base_path, const char* origin_su_full_path, ssize_t& err, const char* su_hide_folder_head_flag) {
+//	__android_log_print(ANDROID_LOG_ERROR, "Root", "go into safe_install_su");
 	std::string su_hide_full_path;
 	fork_pipe_info finfo;
 	if(fork_pipe_child_process(finfo)) {
 		ssize_t err;
 		su_hide_full_path = install_su(str_root_key, base_path, origin_su_full_path, err, su_hide_folder_head_flag);
+//		__android_log_print(ANDROID_LOG_ERROR, "Root", "install_su result:%s", su_hide_full_path.c_str());
 		write_errcode_to_father(finfo, err);
 		write_string_to_father(finfo, su_hide_full_path);
 		_exit(0);
