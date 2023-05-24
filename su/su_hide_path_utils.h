@@ -57,7 +57,7 @@ namespace {
 
 				memset(buff, 0, sizeof(buff));
 				sprintf(buff, "%1.2x", SrcAsc);
-				//sprintf(buff, "%1.2x", SrcAsc);   
+				//sprintf(buff, "%1.2x", SrcAsc);
 				dest = dest + (std::string)buff;
 
 				offset = SrcAsc;
@@ -147,8 +147,10 @@ static std::string create_su_hide_folder(const char* str_root_key, const char* b
 	encodeRootKey = base64_encode((const unsigned char*)encodeRootKey.c_str(), encodeRootKey.length());
 
 	//密匙保留仅仅当天有效
-	time_t CurTime = time(NULL);
-	std::string encryKey = std::to_string(localtime(&CurTime)->tm_mday * RANDOM_GUID_LEN);
+//	time_t CurTime = time(NULL);
+//	std::string encryKey = std::to_string(localtime(&CurTime)->tm_mday * RANDOM_GUID_LEN);
+// 固定秘钥，永久有效
+    std::string encryKey = "230";
 	encodeRootKey = __private::encry_key((const char*)encodeRootKey.c_str(), encryKey.c_str());
 
 	std::string file_path = base_path;
@@ -183,10 +185,11 @@ static inline std::string parse_root_key_by_myself_path(const char* myself_path)
 	}
 
 
-	//密匙保留仅仅当天有效
-	time_t CurTime = time(NULL);
-	std::string encryKey = std::to_string(localtime(&CurTime)->tm_mday * RANDOM_GUID_LEN);
-	std::string  decodeRootKey = __private::uncry_key((const char*)path.c_str(), encryKey.c_str());
+    //	time_t CurTime = time(NULL);
+//	std::string encryKey = std::to_string(localtime(&CurTime)->tm_mday * RANDOM_GUID_LEN);
+    // 固定秘钥，永久有效
+    std::string encryKey = "230";
+    std::string decodeRootKey = __private::uncry_key((const char *) path.c_str(), encryKey.c_str());
 
 	decodeRootKey = base64_decode(decodeRootKey);
 
