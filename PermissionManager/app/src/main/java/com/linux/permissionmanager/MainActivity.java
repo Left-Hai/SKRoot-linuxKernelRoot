@@ -47,7 +47,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String rootKey = "mUBcNll4mhenWlvYEWZF4yOHm5aOPklyq0LAUIAbV0L7R0Ub";
+    private String rootKey = "8xw1obfEKObQwmkbBZJYd4voCrmtD8f56MPFIUwLQqSFcIZA";
     private String suBasePath = "/data/local/tmp";
     private String lastInputCmd = "id";
 
