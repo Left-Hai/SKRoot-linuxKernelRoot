@@ -76,11 +76,13 @@ std::string install_su(const char* str_root_key, const char* base_path, const ch
 	_su_hide_folder_head_flag += "_";
 
 	//1.获取su_xxx隐藏目录
+	__android_log_print(ANDROID_LOG_ERROR, "Root", "查找Root目录: %s, %s", base_path, _su_hide_folder_head_flag.c_str());
 	std::string _su_hide_folder_path = find_su_hide_folder_path(base_path, _su_hide_folder_head_flag.c_str()); //没有再看看子目录
+	__android_log_print(ANDROID_LOG_ERROR, "Root", "查找Root目录结束: %s", _su_hide_folder_path.c_str());
 	if (_su_hide_folder_path.empty()) {
 		//2.取不到，那就创建一个
 		_su_hide_folder_path = create_su_hide_folder(str_root_key, base_path, _su_hide_folder_head_flag.c_str());
-//		__android_log_print(ANDROID_LOG_ERROR, "Root", "取不到，那就创建一个: %s", _su_hide_folder_path.c_str());
+		__android_log_print(ANDROID_LOG_ERROR, "Root", "取不到，那就创建一个: %s", _su_hide_folder_path.c_str());
 	}
 	if (_su_hide_folder_path.empty()) {
 		TRACE("su hide folder path empty error.\n");
@@ -154,7 +156,9 @@ ssize_t uninstall_su(const char* str_root_key, const char* base_path, const char
 
 	do {
 		//获取su_xxx隐藏目录
+		__android_log_print(ANDROID_LOG_ERROR, "Root", "find_su_hide_folder_path base_path:%s, _su_hide_folder_head_flag:%s", base_path, _su_hide_folder_head_flag.c_str());
 		std::string _su_hide_path = find_su_hide_folder_path(base_path, _su_hide_folder_head_flag.c_str()); //没有再看看子目录
+		__android_log_print(ANDROID_LOG_ERROR, "Root", "find_su_hide_folder_path result: %s", _su_hide_path.c_str());
 		if (_su_hide_path.empty()) {
 			break;
 		}
@@ -179,6 +183,7 @@ ssize_t safe_uninstall_su(const char* str_root_key, const char* base_path, const
 
 	fork_pipe_info finfo;
 	if(fork_pipe_child_process(finfo)) {
+		__android_log_print(ANDROID_LOG_ERROR, "Root", "卸载root: str_root_key:%s, base_path：%s， su_hide_folder_head_flag：%s", str_root_key, base_path, su_hide_folder_head_flag);
 		ssize_t ret = uninstall_su(str_root_key, base_path, su_hide_folder_head_flag);
 		write_errcode_to_father(finfo, ret);
 		_exit(0);
